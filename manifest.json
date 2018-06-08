@@ -1,0 +1,53 @@
+{
+	"name": "Ogre Island Super Client",
+	"version": "0.0.1",
+	"manifest_version": 2,
+	"description": "A suite of tools and enhancements for Ogre Island",
+	"homepage_url": "http://ogreisland.com",
+	"icons": {
+		"16": "icons/icon16.png",
+		"48": "icons/icon48.png",
+		"128": "icons/icon128.png"
+	},
+	"default_locale": "en",
+	"background": {
+		"scripts": [
+			"src/bg/background.js"
+		],
+		"persistent": true
+	},
+	"permissions": [
+		"notifications",
+		"https://ogreisland.com/*"
+	],
+	"content_scripts": [
+		{
+			"matches": [
+				"https://ogreisland.com/*",
+				"https://www.ogreisland.com/*"
+			],
+			"css": [
+				"src/inject/inject.css"
+			]
+		},
+		{
+			"matches": [
+				"https://ogreisland.com/*",
+				"https://www.ogreisland.com/*"
+			],
+			"js": [
+				"src/inject/inject.js"
+			]
+		}
+	],
+	"web_accessible_resources": [
+		"src/app/main.js",
+		"src/app/out-of-game-scripts.js",
+		"src/app/in-game-scripts.js",
+		"src/app/modules/CommandRegistry.js",
+		"src/app/modules/Bank.js",
+		"src/app/modules/AutoLoot.js",
+		"src/app/modules/AutoCast.js",
+		"src/app/helpers/getLootAttributes.js"
+	]
+}
