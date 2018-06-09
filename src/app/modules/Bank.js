@@ -65,7 +65,7 @@ class Bank {
 	 * @returns {void}
 	 */
 	clickItemInBag(packet) {
-		if ($('#bankwin').is(':visible') === false) return;
+		if ($('#bankwin').is(':visible') === false || packet[1] !== 'bag') return;
 
 		setTimeout(() => $.ogre.gameHub.server.command(['CLICKBANK', 'bank2', 0, 0]));
 	}

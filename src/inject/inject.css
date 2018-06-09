@@ -83,3 +83,8 @@ body.oisc-oog {
 	padding-right: 5px;
 	width: 30%;
 }
+
+/* Bag */
+.oisc #bag #bag_contents > div > div {
+	display: none;
+}
