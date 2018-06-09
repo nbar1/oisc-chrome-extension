@@ -1,6 +1,7 @@
 import CommandRegistry from './modules/CommandRegistry.js';
 import AutoCast from './modules/AutoCast.js';
 import AutoLoot from './modules/AutoLoot.js';
+import Speed from './modules/Speed.js';
 import Bank from './modules/Bank.js';
 
 /**
@@ -38,6 +39,7 @@ const initialize = (commandRegistry) => {
 	// modules initialization
 	let mAutoCast = new AutoCast(commandRegistry);
 	let mAutoLoot = new AutoLoot(commandRegistry);
+	let mSpeed = new Speed(commandRegistry);
 }
 
 

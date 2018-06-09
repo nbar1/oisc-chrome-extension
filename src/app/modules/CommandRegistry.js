@@ -9,13 +9,13 @@ class CommandRegistry {
 	 */
 	constructor() {
 		this.registry = {};
-		this.outgoingIntercepts = {};
-		this.incomingIntercepts = {};
 		this.incomingPacketIntercepts = [];
 		this.incomingCommandIntercepts = [];
+		this.incomingAttributeIntercepts = [];
 
 		this.initalizePacketInterceptor();
 		this.initalizeCommandInterceptor();
+		this.initializeAttributeInterceptor();
 	}
 
 	/**
@@ -31,6 +31,28 @@ class CommandRegistry {
 	registerChatCommand(command, callback) {
 		console.log(`Registered OISC command ${command}`);
 		this.registry[command] = callback;
+	}
+
+	/**
+	 * interceptChat
+	 *
+	 * @returns {void}
+	 */
+	interceptChat() {
+		window.OISC.overrides.ogre_sendMessage = $.ogre.sendMessage;
+		$.ogre.sendMessage = message => {
+			let messageArray = message.split(' ');
+
+			if (messageArray[0] !== '/oisc' || this.registry[messageArray[1]] === undefined) {
+				return window.OISC.overrides.ogre_sendMessage(message);
+			}
+
+			let registryCommand = messageArray[1];
+			messageArray.splice(0, 2);
+			let localResult = this.registry[registryCommand](messageArray);
+
+			return false;
+		}
 	}
 
 	/**
@@ -99,7 +121,6 @@ class CommandRegistry {
 
 		$.ogre.gameHub.server.command = command => {
 			let shouldContinue = true;
-
 			let activeCallbacks = this.incomingCommandIntercepts.filter(localCommand => localCommand.command === command[0]);
 
 			activeCallbacks.forEach(intercept => {
@@ -119,22 +140,42 @@ class CommandRegistry {
 	}
 
 	/**
-	 * interceptChat
+	 * registerAttributeInterceptor
 	 *
-	 * @returns {void}
+	 * @param {string} attribute
+	 * @param {function} callback
+	 * @returns {any}
 	 */
-	interceptChat() {
-		window.OISC.overrides.ogre_sendMessage = $.ogre.sendMessage;
-		$.ogre.sendMessage = message => {
-			let messageArray = message.split(' ');
+	registerAttributeInterceptor(attribute, callback) {
+		this.incomingAttributeIntercepts.push({
+			attribute,
+			callback,
+		});
+	}
 
-			if (messageArray[0] !== '/oisc' || this.registry[messageArray[1]] === undefined) {
-				return window.OISC.overrides.ogre_sendMessage(message);
+	/**
+	 * initializeAttributeInterceptor
+	 *
+	 * @returns {any}
+	 */
+	initializeAttributeInterceptor() {
+		window.OISC.overrides.ogre_gameHub_client_setAttribute = $.ogre.gameHub.client.setAttribute;
+
+		$.ogre.gameHub.client.setAttribute = (id, attribute, value) => {
+			let shouldContinue = true;
+			let activeCallbacks = this.incomingAttributeIntercepts.filter(intercept => intercept.attribute === attribute);
+
+			activeCallbacks.forEach(intercept => {
+				let localIntercept = intercept.callback(id, attribute, value);
+
+				if (localIntercept === false) {
+					shouldContinue = false;
+				}
+			});
+
+			if (shouldContinue === true) {
+				return window.OISC.overrides.ogre_gameHub_client_setAttribute(id, attribute, value);
 			}
-
-			let registryCommand = messageArray[1];
-			messageArray.splice(0, 2);
-			let localResult = this.registry[registryCommand](messageArray);
 
 			return false;
 		}

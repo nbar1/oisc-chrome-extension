@@ -11,7 +11,6 @@ class AutoLoot {
 	 * @param {CommandRegistry} commandRegistry
 	 */
 	constructor(commandRegistry) {
-		this.contents = [];
 		commandRegistry.registerPacketInterceptor('ADDTOBAG', this.lootItems.bind(this));
 	}
 

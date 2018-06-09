@@ -48,6 +48,7 @@
 		"src/app/modules/Bank.js",
 		"src/app/modules/AutoLoot.js",
 		"src/app/modules/AutoCast.js",
+		"src/app/modules/Speed.js",
 		"src/app/helpers/getLootAttributes.js"
 	]
 }
